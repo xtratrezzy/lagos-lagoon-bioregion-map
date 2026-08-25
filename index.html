@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Field Map · Lagos Lagoon Bioregion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EFE6D3;
+    --paper-dark: #E4D8BE;
+    --ink: #2B3A4A;
+    --ink-light: #4C6076;
+    --sepia: #8B5E34;
+    --moss: #5C7A52;
+    --moss-dark: #435C3B;
+    --rust: #B5482F;
+    --charcoal: #2A2620;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(139,94,52,0.03) 0px, transparent 1px, transparent 2px, rgba(139,94,52,0.03) 3px),
+      radial-gradient(ellipse at top left, rgba(139,94,52,0.06), transparent 50%);
+    color: var(--charcoal);
+    font-family: 'Lora', serif;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 28px;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sepia);
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--sepia);
+  }
+
+  .subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-light);
+    letter-spacing: 0.04em;
+  }
+
+  .coords {
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--sepia);
+  }
+
+  /* --- Map --- */
+  .map-frame {
+    margin: 40px 0;
+    border: 1px solid var(--ink);
+    background: var(--paper-dark);
+    padding: 12px;
+    position: relative;
+    box-shadow: 0 4px 0 rgba(43,58,74,0.08);
+  }
+
+  .map-frame::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(43,58,74,0.35);
+    pointer-events: none;
+  }
+
+  .map-caption {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-light);
+    margin-top: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  /* --- Sections --- */
+  section { margin: 56px 0; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--ink);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .section-title .mark {
+    font-family: 'IBM Plex Mono', monospace;
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--sepia);
+    text-transform: uppercase;
+  }
+
+  .section-rule {
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0, var(--ink) 4px, transparent 4px, transparent 8px);
+    margin-bottom: 24px;
+  }
+
+  p { line-height: 1.7; font-size: 15.5px; color: var(--charcoal); }
+
+  /* Challenge cards */
+  .challenges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .challenge-card {
+    border-left: 3px solid var(--rust);
+    padding: 4px 0 4px 18px;
+  }
+
+  .challenge-card h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--rust);
+    margin: 0 0 8px;
+  }
+
+  .challenge-card p { font-size: 14px; margin: 0; color: var(--ink); }
+
+  /* Coordination project callout */
+  .project-box {
+    border: 1px solid var(--moss);
+    background: rgba(92,122,82,0.07);
+    padding: 24px 28px;
+    position: relative;
+  }
+
+  .project-box .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--moss-dark);
+    margin-bottom: 8px;
+  }
+
+  .project-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    margin: 0 0 10px;
+    color: var(--moss-dark);
+  }
+
+  .project-box p { margin: 0; font-size: 14.5px; }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 2px solid var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-light);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Bioregional Field Survey · No. 01</p>
+    <h1>The <em>Lagos Lagoon</em> Watershed</h1>
+    <p class="subtitle">A coastal estuarine bioregion, southwest Nigeria</p>
+    <p class="coords">6.45°N, 3.47°E · Gulf of Guinea coast</p>
+  </header>
+
+  <div class="map-frame">
+    <svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; display:block;">
+
+      <!-- Land base -->
+      <rect x="0" y="0" width="900" height="620" fill="#E4D8BE" />
+
+      <!-- Contour/depth lines for texture -->
+      <g fill="none" stroke="#8B5E34" stroke-width="0.6" opacity="0.25">
+        <path d="M -20 60 Q 200 40 450 70 T 920 50" />
+        <path d="M -20 100 Q 220 80 460 105 T 920 90" />
+        <path d="M -20 560 Q 250 545 480 565 T 920 550" />
+      </g>
+
+      <!-- Atlantic Ocean -->
+      <rect x="0" y="480" width="900" height="140" fill="#2B3A4A" opacity="0.85" />
+      <text x="450" y="560" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="#EFE6D3" letter-spacing="3">GULF OF GUINEA</text>
+
+      <!-- Lagos Lagoon (west, large body) -->
+      <path d="M 90 300 Q 60 340 90 390 Q 120 440 220 460 Q 340 480 420 450 Q 470 430 460 380 Q 450 330 380 310 Q 300 290 220 300 Q 150 305 90 300 Z"
+            fill="#4C6076" stroke="#2B3A4A" stroke-width="2"/>
+      <text x="220" y="390" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="18" fill="#EFE6D3">Lagos Lagoon</text>
+
+      <!-- Lekki Lagoon (east, connected) -->
+      <path d="M 480 370 Q 470 420 540 450 Q 630 480 700 450 Q 750 430 740 390 Q 725 350 650 340 Q 560 335 480 370 Z"
+            fill="#5A7290" stroke="#2B3A4A" stroke-width="2"/>
+      <text x="610" y="410" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="17" fill="#EFE6D3">Lekki Lagoon</text>
+
+      <!-- Channel connecting the two lagoons (Five Cowrie Creek area, schematic) -->
+      <path d="M 460 390 Q 470 385 480 385" stroke="#2B3A4A" stroke-width="10" fill="none" opacity="0.6"/>
+
+      <!-- Lekki-Epe outlet to ocean -->
+      <path d="M 700 450 Q 730 470 750 500" stroke="#4C6076" stroke-width="14" fill="none" />
+
+      <!-- Lagos Harbour outlet to ocean -->
+      <path d="M 150 400 Q 140 440 160 480" stroke="#4C6076" stroke-width="16" fill="none" />
+
+      <!-- Ogun River, entering from north -->
+      <path d="M 200 60 Q 190 150 210 230 Q 225 270 220 300" stroke="#4C6076" stroke-width="7" fill="none" />
+      <text x="140" y="150" font-family="IBM Plex Mono" font-size="11" fill="#4C6076" transform="rotate(-72 140 150)">OGUN RIVER</text>
+
+      <!-- Osun River tributary -->
+      <path d="M 320 40 Q 310 130 300 200 Q 290 250 280 295" stroke="#4C6076" stroke-width="5" fill="none" />
+      <text x="345" y="150" font-family="IBM Plex Mono" font-size="10" fill="#4C6076" transform="rotate(-80 345 150)">OSUN RIVER</text>
+
+      <!-- Watershed boundary (dashed, schematic) -->
+      <path d="M 40 40 Q 300 10 600 30 Q 800 45 870 130 Q 890 250 850 380 Q 800 470 700 495 Q 500 520 300 500 Q 120 480 50 400 Q 20 250 40 40 Z"
+            fill="none" stroke="#B5482F" stroke-width="2" stroke-dasharray="10 6" opacity="0.7"/>
+      <text x="800" y="120" font-family="IBM Plex Mono" font-size="10" fill="#B5482F" opacity="0.85">WATERSHED</text>
+      <text x="800" y="133" font-family="IBM Plex Mono" font-size="10" fill="#B5482F" opacity="0.85">BOUNDARY (approx.)</text>
+
+      <!-- Mangrove fringe icons along lagoon edges -->
+      <g fill="#5C7A52">
+        <g id="mgv1" transform="translate(95,330)"><circle r="7"/><circle cx="10" cy="4" r="6"/><circle cx="-8" cy="6" r="5"/></g>
+        <use href="#mgv1" transform="translate(20,60)"/>
+        <use href="#mgv1" transform="translate(60,110)"/>
+        <use href="#mgv1" transform="translate(130,130)"/>
+        <use href="#mgv1" transform="translate(230,140)"/>
+        <use href="#mgv1" transform="translate(340,110)"/>
+        <use href="#mgv1" transform="translate(400,60)"/>
+        <use href="#mgv1" transform="translate(430,-30)"/>
+        <use href="#mgv1" transform="translate(500,30)"/>
+        <use href="#mgv1" transform="translate(560,20)"/>
+        <use href="#mgv1" transform="translate(620,0)"/>
+        <use href="#mgv1" transform="translate(560,90)"/>
+        <use href="#mgv1" transform="translate(640,100)"/>
+      </g>
+
+      <!-- Lekki Conservation Centre marker -->
+      <g transform="translate(660,340)">
+        <circle r="8" fill="#5C7A52" stroke="#2A2620" stroke-width="1.5"/>
+        <path d="M 0 -8 L 3 -14 L -3 -14 Z" fill="#5C7A52"/>
+      </g>
+      <text x="675" y="335" font-family="IBM Plex Mono" font-size="10.5" fill="#435C3B" font-weight="600">Lekki Conservation Centre</text>
+      <text x="675" y="349" font-family="IBM Plex Mono" font-size="9.5" fill="#435C3B">est. 1990 · NCF</text>
+
+      <!-- Pollution/effluent marker (western lagoon, industrial + urban outfall) -->
+      <g transform="translate(160,340)">
+        <circle r="9" fill="#B5482F" opacity="0.85"/>
+        <text x="0" y="4" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#EFE6D3" font-weight="600">!</text>
+      </g>
+      <text x="30" y="290" font-family="IBM Plex Mono" font-size="10" fill="#B5482F" font-weight="600">Industrial + urban outfall</text>
+      <text x="30" y="303" font-family="IBM Plex Mono" font-size="9.5" fill="#B5482F">(via Ogun/Osun rivers)</text>
+
+      <!-- Dredging / mangrove loss marker (Lekki peninsula reclamation zone) -->
+      <g transform="translate(560,400)">
+        <circle r="9" fill="#B5482F" opacity="0.85"/>
+        <text x="0" y="4" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#EFE6D3" font-weight="600">!</text>
+      </g>
+      <text x="500" y="450" font-family="IBM Plex Mono" font-size="10" fill="#B5482F" font-weight="600">Sand dredging &amp;</text>
+      <text x="500" y="463" font-family="IBM Plex Mono" font-size="10" fill="#B5482F" font-weight="600">land reclamation</text>
+
+      <!-- Flood-vulnerable low-lying coast hatching -->
+      <g stroke="#B5482F" stroke-width="1" opacity="0.4">
+        <line x1="100" y1="475" x2="115" y2="490"/>
+        <line x1="130" y1="475" x2="145" y2="490"/>
+        <line x1="160" y1="475" x2="175" y2="490"/>
+        <line x1="600" y1="465" x2="615" y2="480"/>
+        <line x1="630" y1="465" x2="645" y2="480"/>
+        <line x1="660" y1="465" x2="675" y2="480"/>
+      </g>
+      <text x="60" y="500" font-family="IBM Plex Mono" font-size="9" fill="#B5482F">flood-vulnerable coast</text>
+
+      <!-- Compass rose -->
+      <g transform="translate(830,60)">
+        <circle r="26" fill="none" stroke="#2A2620" stroke-width="1"/>
+        <path d="M 0 -22 L 5 0 L 0 22 L -5 0 Z" fill="#2A2620"/>
+        <path d="M -22 0 L 0 5 L 22 0 L 0 -5 Z" fill="#8B5E34"/>
+        <text x="0" y="-30" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#2A2620">N</text>
+      </g>
+
+      <!-- Scale bar -->
+      <g transform="translate(60,585)">
+        <line x1="0" y1="0" x2="80" y2="0" stroke="#2A2620" stroke-width="2"/>
+        <line x1="0" y1="-4" x2="0" y2="4" stroke="#2A2620" stroke-width="2"/>
+        <line x1="80" y1="-4" x2="80" y2="4" stroke="#2A2620" stroke-width="2"/>
+        <text x="40" y="16" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#2A2620">≈ 15 KM (schematic)</text>
+      </g>
+
+    </svg>
+    <p class="map-caption">Schematic field sketch — not to scale, not a substitute for surveyed GIS boundaries.</p>
+  </div>
+
+  <section>
+    <h2 class="section-title">The Watershed <span class="mark">01 · Boundaries</span></h2>
+    <div class="section-rule"></div>
+    <p>Lagos Lagoon and its connected Lekki Lagoon sit within the coastal Dahomey sedimentary basin of southwest Nigeria, fed principally by the Ogun and Osun rivers draining down from the interior. The lagoon system empties into the Atlantic through two main outlets — the Lagos Harbour channel to the west and the Lekki-Epe channel to the east — forming one continuous estuarine watershed even though it's often treated administratively as two separate water bodies. Around 20 million people live within this catchment today.</p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Key Ecosystems <span class="mark">02 · Habitat</span></h2>
+    <div class="section-rule"></div>
+    <p>The lagoon's shoreline is fringed by mangrove swamp forest — part of a coastal mangrove belt that, at the national scale, makes Nigeria home to Africa's largest mangrove ecosystem. These fringing mangroves and the brackish wetlands behind them filter runoff, buffer the shoreline from erosion, and serve as a nursery habitat for the fish stocks much of the surrounding population depends on. The Lekki Peninsula also holds a protected pocket of freshwater swamp forest and rainforest, one of the last intact fragments of pre-urban vegetation left in the immediate metro area.</p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Environmental Pressures <span class="mark">03 · Field Notes</span></h2>
+    <div class="section-rule"></div>
+    <div class="challenges">
+      <div class="challenge-card">
+        <h3>Industrial &amp; Urban Pollution</h3>
+        <p>Lagos Lagoon ranks among the most polluted African ecosystems by WHO/UN Environment data — heavy metals and hydrocarbon pollutants arrive via oil, textile, and urban sewage effluent carried down the Ogun and Osun rivers.</p>
+      </div>
+      <div class="challenge-card">
+        <h3>Mangrove Loss to Dredging</h3>
+        <p>Large-scale sand dredging for land reclamation — building new coastal real estate developments — is actively burying and destroying mangrove forest along the lagoon's edges.</p>
+      </div>
+      <div class="challenge-card">
+        <h3>Flood Vulnerability</h3>
+        <p>Lagos is ranked among the 50 cities most vulnerable to extreme sea level rise globally; roughly 12% of the state already floods seasonally, a share only rising with wetland loss.</p>
+      </div>
+      <div class="challenge-card">
+        <h3>Population Pressure</h3>
+        <p>With 20+ million people concentrated around the lagoon, ongoing urban expansion continues to convert wetland buffer zones into hard, impermeable development.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Local Coordination <span class="mark">04 · Who's Working On This</span></h2>
+    <div class="section-rule"></div>
+    <div class="project-box">
+      <p class="tag">Existing project · est. 1990</p>
+      <h3>Nigerian Conservation Foundation — Lekki Conservation Centre</h3>
+      <p>Nigeria's oldest conservation NGO, founded 1980, established and still runs the Lekki Conservation Centre directly within this bioregion — a protected wetland and forest reserve on the Lekki Peninsula. NCF's broader work includes wetland conservation programs and a national forest-recovery initiative aimed at rebuilding Nigeria's forest cover. It's one of the few standing, on-the-ground coordination points actually working inside this specific watershed, rather than studying it from outside.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Compiled for the owockibot bioregional mapping bounty</span>
+    <span>Sources: peer-reviewed lagoon pollution studies, IntechOpen mangrove ecosystem review, NCF Nigeria</span>
+  </footer>
+
+</div>
+</body>
+</html>
